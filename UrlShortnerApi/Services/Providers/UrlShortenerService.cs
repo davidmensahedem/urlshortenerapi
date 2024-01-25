@@ -11,7 +11,7 @@
             ApplicationDbContext dbContext) =>
             (_urlConfig, _dbContex) = (urlConfig.Value, dbContext);
 
-        public async Task<ApiResponse<string>> GenerateShortUrl(string url,HttpRequest request)
+        public async Task<ApiResponse<string>> GenerateShortUrl(string url, HttpRequest request)
         {
             try
             {
@@ -71,6 +71,39 @@
                 {
                     Code = $"{StatusCodes.Status500InternalServerError}",
                     Message = "An error occured while creating the short url"
+                };
+            }
+        }
+
+        public async Task<ApiResponse<string>> RedirectUrl(string code)
+        {
+            try
+            {
+                var existingShortUrl = await _dbContex.UrlShortners.FirstOrDefaultAsync(u => u.Code!.Equals(code));
+
+                if (existingShortUrl is null)
+                {
+                    return new ApiResponse<string>
+                    {
+                        Code = $"{StatusCodes.Status400BadRequest}",
+                        Message = "Invalid url code provided"
+                    };
+                }
+                               
+                return new ApiResponse<string>
+                {
+                    Code = $"{StatusCodes.Status200OK}",
+                    Message = "Successful",
+                    Data = existingShortUrl.LongUrl
+                };
+            }
+            catch (Exception e)
+            {
+
+                return new ApiResponse<string>
+                {
+                    Code = $"{StatusCodes.Status500InternalServerError}",
+                    Message = "An error occured while redirecting url"
                 };
             }
         }

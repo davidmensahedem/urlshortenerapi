@@ -1,6 +1,4 @@
-﻿using UrlShortnerApi.Options;
-
-namespace UrlShortnerApi.Storage
+﻿namespace UrlShortnerApi.Storage
 {
     public class ApplicationDbContext:DbContext
     {

@@ -5,3 +5,6 @@ global using Microsoft.Extensions.Options;
 global using UrlShortnerApi.Models.Response;
 global using UrlShortnerApi.Options;
 global using UrlShortnerApi.Storage;
+global using Microsoft.AspNetCore.Mvc;
+global using UrlShortnerApi.Models.Requests;
+global using UrlShortnerApi.Services.Providers;

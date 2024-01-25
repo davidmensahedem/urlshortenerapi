@@ -1,8 +1,3 @@
-using UrlShortnerApi.Options;
-using UrlShortnerApi.Services.Interfaces;
-using UrlShortnerApi.Services.Providers;
-using UrlShortnerApi.Storage;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUrlShortenerService, UrlShortenerService>();
-builder.Services.AddDbContext<ApplicationDbContext>(options 
+builder.Services.AddDbContext<ApplicationDbContext>(options
     => options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
 
 builder.Services.Configure<UrlShortingConfig>(urlConfig => builder.Configuration.GetSection(nameof(UrlShortingConfig)).Bind(urlConfig));
@@ -25,6 +20,37 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+
+app.MapPost("api/create-short-url", async (
+    [FromBody] ShortenUrlRequest request,
+    [FromServices] IUrlShortenerService urlShortenerService,
+    HttpContext httpContext
+    ) =>
+{
+    var response = await urlShortenerService.GenerateShortUrl(request.Url!, httpContext.Request);
+
+    httpContext.Response.StatusCode = Convert.ToInt32(response.Code);
+
+    await httpContext.Response.WriteAsJsonAsync(response);
+});
+
+
+app.MapGet("api/{code}", async (
+    string code,
+    [FromServices] IUrlShortenerService urlShortenerService,
+    HttpContext httpContext
+    ) =>
+{
+    var response = await urlShortenerService.RedirectUrl(code);
+
+    httpContext.Response.StatusCode = Convert.ToInt32(response.Code);
+
+    if (httpContext.Response.StatusCode != 200)
+        await httpContext.Response.WriteAsJsonAsync(response);
+
+    return Results.Redirect(response.Data!);
+}).ExcludeFromDescription();
 
 
 
