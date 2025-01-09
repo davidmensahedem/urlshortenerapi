@@ -52,6 +52,38 @@ app.MapGet("api/{code}", async (
     return Results.Redirect(response.Data!);
 }).ExcludeFromDescription();
 
+// check for any pending migrations and run
+using (var scope = app.Services.CreateScope())
+{
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    var services = scope.ServiceProvider;
+    try
+    {
+        var storageContext = services.GetRequiredService<ApplicationDbContext>();
+
+        var count = (await storageContext.Database.GetPendingMigrationsAsync()).Count();
+
+        if (count > 0)
+        {
+            logger.LogInformation("found {Count} pending migrations to apply. will proceed to apply them", count);
+
+            await storageContext.Database.MigrateAsync();
+
+            logger.LogInformation("done applying pending migrations");
+        }
+        else
+        {
+            logger.LogInformation("no pending migrations found! :)");
+        }
+
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while performing migration.");
+    }
+}
 
 
-app.Run();
+
+await app.RunAsync();
