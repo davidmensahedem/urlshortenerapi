@@ -19,7 +19,7 @@
                 {
                     return new ApiResponse<string>
                     {
-                        Code = $"{StatusCodes.Status400BadRequest}",
+                        Code = StatusCodes.Status400BadRequest.ToString(),
                         Message = "Invalid URL specified."
                     };
                 }
@@ -32,7 +32,7 @@
                 {
                     return new ApiResponse<string>
                     {
-                        Code = $"{StatusCodes.Status409Conflict}",
+                        Code = StatusCodes.Status409Conflict.ToString(),
                         Message = "Couldn't create url. Resource conflict occured."
                     };
                 }
@@ -52,14 +52,14 @@
                 {
                     return new ApiResponse<string>
                     {
-                        Code = $"{StatusCodes.Status424FailedDependency}",
+                        Code = StatusCodes.Status424FailedDependency.ToString(),
                         Message = "Couldn't create url. Kindly try again"
                     };
                 }
 
                 return new ApiResponse<string>
                 {
-                    Code = $"{StatusCodes.Status201Created}",
+                    Code = StatusCodes.Status201Created.ToString(),
                     Message = "Successful",
                     Data = shortUrl.ShortUrl
                 };
@@ -69,7 +69,7 @@
 
                 return new ApiResponse<string>
                 {
-                    Code = $"{StatusCodes.Status500InternalServerError}",
+                    Code = StatusCodes.Status500InternalServerError.ToString(),
                     Message = "An error occured while creating the short url"
                 };
             }
@@ -85,14 +85,14 @@
                 {
                     return new ApiResponse<string>
                     {
-                        Code = $"{StatusCodes.Status400BadRequest}",
+                        Code = StatusCodes.Status400BadRequest.ToString(),
                         Message = "Invalid url code provided"
                     };
                 }
-                               
+
                 return new ApiResponse<string>
                 {
-                    Code = $"{StatusCodes.Status200OK}",
+                    Code = StatusCodes.Status200OK.ToString(),
                     Message = "Successful",
                     Data = existingShortUrl.LongUrl
                 };
@@ -102,7 +102,7 @@
 
                 return new ApiResponse<string>
                 {
-                    Code = $"{StatusCodes.Status500InternalServerError}",
+                    Code = StatusCodes.Status500InternalServerError.ToString(),
                     Message = "An error occured while redirecting url"
                 };
             }
